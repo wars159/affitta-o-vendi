@@ -1,0 +1,270 @@
+<!DOCTYPE html><html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#1f8f3a"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="Simulatore per decidere se affittare o vendere un immobile: VAN, TIR, payback e prezzo di pareggio.">
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<title>Affittare o Vendere</title>
+<style>
+:root{--g:#3DCD58;--gd:#1f8f3a;--bg:#f4f6f8;--card:#fff;--tx:#1d2733;--mu:#6b7785;--red:#d64545;--or:#ED7D31;--bd:#e3e8ee;--wa:#25D366}
+*{box-sizing:border-box}html,body{overflow-x:hidden}body{margin:0;font-family:Segoe UI,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:13px}
+header{background:linear-gradient(90deg,#123b22,#1f8f3a);color:#fff;padding:12px 22px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+header h1{margin:0;font-size:19px}#sub{opacity:.85;font-size:12px}
+.hbtn{display:flex;gap:8px;flex-wrap:wrap}
+button{border:0;background:var(--g);color:#fff;padding:8px 13px;border-radius:6px;cursor:pointer;font-weight:600;font-size:12.5px}
+button.wa{background:var(--wa)}button.clr{background:var(--red)}button.sec{background:#8a96a3}
+.wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
+aside{background:var(--card);border-radius:10px;box-shadow:0 1px 3px #0001;max-height:calc(100vh - 100px);overflow:auto;position:sticky;top:12px}
+details{border-bottom:1px solid var(--bd)}summary{padding:10px 14px;font-weight:600;cursor:pointer;background:#fafbfc}details.box summary{color:var(--or)}
+.f{display:grid;grid-template-columns:1fr 112px;gap:6px;align-items:center;padding:4px 14px}
+.f label{font-size:12px;color:#334}
+.f input,.f select{width:100%;padding:5px 6px;border:1px solid #cfd6de;border-radius:5px;font-size:12px;text-align:right;color:#0033cc;background:#fff}
+.f input:disabled{color:#888;background:#f2f2f2}.f input:focus{outline:2px solid var(--g)}
+.btns{padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.empty{background:#fff8e1;border:1px solid #f3d27a;color:#7a5a00;border-radius:10px;padding:12px 14px;font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.k{background:var(--card);border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px #0001;border-left:4px solid var(--g);min-width:0}
+.k .l{color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.3px}.k .v{font-size:21px;font-weight:700;margin-top:4px}.k .s{font-size:11px;color:var(--mu)}
+.card{background:var(--card);border-radius:10px;padding:14px;box-shadow:0 1px 3px #0001;min-width:0}
+.card h2{margin:0 0 10px;font-size:15px}.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:1300px){.grid2{grid-template-columns:1fr}}
+table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}
+th{background:var(--g);color:#fff;font-weight:600;text-align:center}td:first-child,th:first-child{text-align:left;position:sticky;left:0}
+td:first-child{background:#fff;z-index:1}th:first-child{z-index:2}tr.hl td{background:#fff6d6;font-weight:700}td.neg{color:var(--red)}
+.pill{padding:2px 8px;border-radius:10px;font-weight:700;font-size:11px;white-space:nowrap}.pa{background:#c6efce;color:#006100}.pv{background:#ffc7ce;color:#9c0006}.pn{background:#eee;color:#555}
+td.cg{background:#e6f6ea}td.cr{background:#fde8e8}.sel{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.sel select{padding:5px}
+.note{font-size:11px;color:var(--mu);margin-top:8px;line-height:1.5}svg text{font-family:Segoe UI,Arial;font-size:11px}
+.mcards,.tabbar,.mbar,.mobi{display:none}
+.sc{border:1px solid var(--bd);border-radius:10px;margin-bottom:10px;overflow:hidden}.sc.best{border:2px solid var(--g)}
+.sc .hd{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:#f7faf8;font-weight:700}
+.sc .bd{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;padding:10px 12px;font-size:13px}.sc .bd span{display:block;color:var(--mu);font-size:11px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1d2733;color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:.3s;z-index:99;pointer-events:none;max-width:90vw;text-align:center}.toast.on{opacity:.95}
+@media(max-width:1000px){.wrap{grid-template-columns:1fr}aside{position:static;max-height:none}}
+@media(max-width:760px){
+ body{font-size:14px;padding-bottom:calc(62px + env(safe-area-inset-bottom))}
+ header{padding:10px 14px;position:sticky;top:0;z-index:20}header h1{font-size:16px}#sub{font-size:11px}.hbtn{display:none}
+ .wrap{display:block;padding:10px}body:not(.show-in) aside{display:none}body.show-in main{display:none}
+ .f{grid-template-columns:1fr 125px;padding:7px 12px}.f label{font-size:13px}.f input,.f select{font-size:16px;padding:8px;min-height:40px}
+ summary{padding:14px;font-size:15px}.btns{grid-template-columns:1fr}.btns button{padding:13px;font-size:15px}
+ .kpis{grid-template-columns:1fr 1fr;gap:8px}.k{padding:10px}.k .v{font-size:16px}.k .l{font-size:10px}
+ .card{padding:12px}.card h2{font-size:14px}
+ #summaryWrap{display:none}.mcards,.mobi{display:block}
+ .mbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:#fff;border-radius:10px;box-shadow:0 1px 3px #0001;font-weight:700;margin-bottom:10px}
+ main{gap:10px}
+ .tabbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;bottom:0;left:0;right:0;width:100%;max-width:100vw;overflow:hidden;background:#fff;border-top:1px solid var(--bd);z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+ .tabbar button{min-width:0;width:100%;margin:0;background:none;color:#6b7785;border-radius:0;padding:6px 1px 7px;font-size:10px;font-weight:600;line-height:1.15;border-top:3px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .tabbar button.on{color:var(--gd);border-top-color:var(--g)}.tabbar b{display:block;font-size:18px;line-height:1.2}
+ th,td{padding:7px 6px}.sel select{width:100%;font-size:15px;padding:8px}svg text{font-size:14px}
+}
+@media(max-width:360px){.tabbar button{font-size:9px}.tabbar b{font-size:16px}}
+</style></head><body>
+<header><div><h1>Affittare o Vendere – Simulatore immobiliare</h1><div id="sub"></div></div>
+<div class="hbtn"><button class="wa" onclick="shareApp()">📤 Condividi app</button><button class="clr" onclick="clearAll()">🗑️ Cancella tutti i dati</button></div></header>
+<div class="wrap"><aside id="inputs"></aside>
+<main>
+ <div class="empty" id="empty">✏️ Inserisci i dati dell'immobile (offerta, superficie, canoni, spese) nella sezione Input per vedere i risultati.</div>
+ <div class="mbar" id="mbar"></div>
+ <div class="kpis" id="kpis"></div>
+ <div class="card"><h2>Sintesi scenari</h2><div class="mcards" id="mcards"></div><div id="summaryWrap" class="tw"><div id="summary"></div></div></div>
+ <div class="grid2" id="charts">
+  <div class="card"><h2>VAN affitto vs vendita oggi (€)</h2><div id="chVan"></div></div>
+  <div class="card"><h2>TIR (tasso di pareggio) vs rendimento alternativo</h2><div id="chIrr"></div></div>
+ </div>
+ <div class="grid2">
+  <div class="card"><h2>Patrimonio nel tempo: affitto vs vendita</h2><div id="chCum"></div><div class="note">Tratteggio rosso = vendita oggi + investimento. Linee = cash flow reinvestiti + valore netto immobile.</div></div>
+  <div class="card"><h2>Box da solo – affitto a terzi (IRPEF) vs vendita</h2><div id="box"></div></div>
+ </div>
+ <div class="grid2" id="sens">
+  <div class="card"><h2>Sensitività prezzo offerto – VAN (€)</h2><div class="note mobi">Scorri la tabella →</div><div class="tw" id="sOff"></div></div>
+  <div class="card"><h2>Sensitività rendimento alternativo netto – VAN (€)</h2><div class="note mobi">Scorri la tabella →</div><div class="tw" id="sRate"></div></div>
+ </div>
+ <div class="card"><div class="sel"><h2 style="margin:0">Flussi annui – scenario</h2><select id="fsel"></select><button class="sec" onclick="exportCSV()">Esporta CSV</button></div><div class="note mobi">Scorri la tabella →</div><div class="tw" id="flows"></div></div>
+ <div class="card note" id="notes"></div>
+</main></div>
+<nav class="tabbar"><button class="on" id="tbR" onclick="tab(0)"><b>📊</b>Risultati</button><button id="tbI" onclick="tab(1)"><b>✏️</b>Input</button><button onclick="go('charts')"><b>📈</b>Grafici</button><button onclick="go('sens')"><b>🎯</b>Sensibilità</button><button onclick="shareApp()" style="color:#128C7E"><b>📤</b>Condividi</button></nav>
+<div class="toast" id="toast"></div>
+<script>
+const APP_SRC="<!DOCTYPE html>\n"+document.documentElement.outerHTML;
+const APP_NAME="Affittare_o_Vendere.html";
+const SCEN=[["A","Concordato – IRPEF"],["B","Concordato – Cedolare attuale"],["C","Concordato – Cedolare agevolata"],["D","Concordato – Cedolare agevolata <36"],["E","Libero – Cedolare"],["F","Simulazione (canone a scelta)"]];
+function irr(fl){if(!fl.every(isFinite)||fl.every(v=>v===0))return null;let lo=-0.99,hi=1;const npv=r=>fl.reduce((s,c,t)=>s+c/Math.pow(1+r,t),0);
+ if(npv(lo)*npv(hi)>0)return null;for(let i=0;i<200;i++){const m=(lo+hi)/2;(npv(lo)*npv(m)<=0)?hi=m:lo=m;}return (lo+hi)/2;}
+function calc(p){
+ const N=Math.max(1,Math.min(50,Math.round(p.N||1)));
+ const fpct=p.fee*(1+p.iva), fix=p.tec+p.ipo+p.oth, cv=p.off*fpct+fix;
+ const tpv=p.pv==="SI"?p.pvr:0, pvi=tpv*Math.max(0,p.off-cv-(p.cb||0));
+ const mkt=p.mktLink?p.off:p.mkt, bmkt=p.bmktLink?p.bp:p.bmkt;
+ const caph=p.off-cv-pvi-p.mut, capb=p.bx*(p.bp*(1-fpct)-p.bfix), cap=caph+capb;
+ const rport=p.we*p.re*(1-p.te)+(1-p.we)*p.rb*(1-p.tb)-p.ter;
+ const rn=p.mode==="Manuale"?p.rman:rport;
+ const k=p.we*(1-p.te)+(1-p.we)*(1-p.tb);
+ const cca=p.mq*p.cmq+p.cmc*p.ccc*p.cmq, cla=p.cl*12, csa=(p.cs||0)*12;
+ const bimu=p.rc*1.05*p.cimu, imuc=bimu*p.imc, imul=bimu*p.iml, mra=mkt*p.mrp;
+ const bca=p.bx*p.bc*12, bimc=p.bx*p.brc*1.05*p.cimu*p.imc, biml=p.bx*p.brc*1.05*p.cimu*p.iml;
+ const tax=(c,base,Y)=>({A:base*(1-p.ab5)*(1-p.ab30)*(p.irp+p.add)+base*p.reg*(1-p.ab30),B:base*p.c10,C:base*(Y<=p.ylast?p.c5:p.c10),D:base*(Y<=p.ylast?p.c1:p.c10),E:base*p.c21,
+   F:p.rg==="IRPEF"?base*(1-p.ab5)*(p.irp+p.add)+base*p.reg:base*p.c21})[c];
+ const realiz=(mkt+p.bx*bmkt)*Math.pow(1+p.g,N)*(1-fpct)-fix-p.bx*p.bfix-p.mut;
+ const disc=t=>Math.pow(1+rn,t);
+ const out={cap,caph,capb,cv,rn,rport,N,fpct,mkt,bmkt,scen:{}};
+ for(const [c] of SCEN){
+  const rows=[];let flows=[-cap],cum=0,cums=[],pv=0,maint=0;
+  for(let t=1;t<=50;t++){const Y=p.y0+t-1;
+   let can=(c<="D")?cca*(c==="A"?Math.pow(1+p.idx,t-1):1):(c==="E"?cla:csa*(p.rg==="IRPEF"?Math.pow(1+p.idx,t-1):1));
+   const sf=-can*p.vac/12, eff=can+sf;
+   const imu=(c<="D")?imuc:imul, tx=tax(c,eff,Y);
+   const ctb=(c<="D"&&p.ctby>0&&t<=p.ctby)?p.ctb/p.ctby:0;
+   const mr=-mra*Math.pow(1+p.minf,t-1), inf=t===p.infy?-p.inf:0, cst=-p.cst*Math.pow(1+p.minf,t-1);
+   const det=(t>p.infy&&t<=p.infy+10)?p.inf*p.det/10:0, oth=-(p.man+p.mut*p.tm);
+   const bcn=bca*(1-p.vac/12);
+   const btx=p.bt==="SI"?tax(c,bcn,Y):bcn*(1-p.ab5)*(p.irp+p.add)+bcn*p.reg;
+   const bim=(c<="D")?(p.bt==="SI"?bimc:biml):biml;
+   const box=bcn-btx-(bim+p.bx*(p.bcond+p.bman));
+   const cf=can+sf-p.condp-imu-tx+ctb+mr+inf+cst+det+oth+box;
+   if(t<=N)maint+=-(mr+inf+cst+det);
+   const re=t===N?realiz:0, ft=t<=N?cf+re:0;
+   if(t<=N)flows.push(ft); pv+=ft/disc(t);
+   cum+=cf;cums.push(cum);
+   rows.push({t,Y,can,sf,cond:-p.condp,imu:-imu,tx:-tx,ctb,mr,inf,cst,det,oth,box,cf,re});
+  }
+  const avg=rows.slice(0,N).reduce((s,r)=>s+r.cf,0)/N;
+  let h=cums.filter(x=>x<cap).length, payback=h>=50?null:h+(cap-(h===0?0:cums[h-1]))/rows[h].cf;
+  const ir=irr(flows), van=pv-cap;
+  const be=(pv-capb+fix*(1-tpv)+p.mut-tpv*(p.cb||0))/((1-fpct)*(1-tpv));
+  out.scen[c]={rows,flows,avg,payback,irr:ir,van,be,maint,cf1:rows[0].cf,box1:rows[0].box,
+   can1:rows[0].can+bca,gross:(rows[0].can+bca)/(p.off+p.bx*p.bp),tenant:(rows[0].can+p.cond-p.condp)/12,
+   irrGross:ir==null?null:(ir+p.ter)/k,patr:pv*disc(N),
+   esito:cap<=0?"Inserire dati":(c==="F"&&!p.cs)?"Inserire canone":(van>0?"AFFITTARE":"VENDERE")};
+ }
+ const bcap=p.bp*(1-fpct)-p.bfix, bfl=[-bcap]; let bpv=0;
+ const bcf1=p.bc*12*(1-p.vac/12), bnet=bcf1-(bcf1*(1-p.ab5)*(p.irp+p.add)+bcf1*p.reg)-(p.brc*1.05*p.cimu*p.iml+p.bcond+p.bman);
+ for(let t=1;t<=N;t++){const f=bnet+(t===N?bmkt*Math.pow(1+p.g,N)*(1-fpct)-p.bfix:0);bfl.push(f);bpv+=f/disc(t);}
+ const ann=rn?(1-Math.pow(1+rn,-N))/rn:N, bvan=bpv-bcap;
+ out.box={cap:bcap,gross:p.bc*12/p.bp,cf:bnet,net:bnet/p.bp,irr:irr(bfl),van:bvan,
+   be:p.bc-bvan/(12*(1-p.vac/12)*(1-(1-p.ab5)*(p.irp+p.add)-p.reg)*ann)};
+ const base=p.off>0?p.off:300000, offs=[p.off];for(let i=-6;i<=6;i++)if(i)offs.push(Math.round(base*(1+i*0.04)/1000)*1000);
+ out.sensOff=offs.map(o=>{const c2=o-(o*fpct+fix)-tpv*Math.max(0,o-(o*fpct+fix)-(p.cb||0))-p.mut+capb;
+   return {o,v:SCEN.map(([c])=>out.scen[c].van+cap-c2)};});
+ out.sensRate=[];for(let i=0;i<=14;i++){const r=0.01+i*0.005;out.sensRate.push({r,v:SCEN.map(([c])=>out.scen[c].flows.reduce((s,f,t)=>s+f/Math.pow(1+r,t),0)-cap)});}
+ return out;}
+
+const DEF={"off":0,"mktLink":true,"mkt":0,"fee":0,"iva":0.22,"tec":0,"ipo":0,"oth":0,"mut":0,"tm":0,"pv":"NO","cb":0,"pvr":0.26,"mq":0,"cmq":0,"cmc":0,"ccc":0.25,"rc":0,"cimu":160,"imc":0,"iml":0,"cond":0,"condp":0,"cl":0,"cs":0,"rg":"IRPEF","irp":0,"add":0,"ab5":0.05,"ab30":0.3,"reg":0.01,"c21":0.21,"c10":0.1,"c5":0.05,"c1":0.01,"ylast":2031,"y0":2027,"ctb":0,"ctby":5,"vac":0,"idx":0,"mrp":0,"minf":0.02,"inf":0,"infy":1,"cst":0,"det":0,"man":0,"bx":0,"bp":0,"bmktLink":true,"bmkt":0,"bfix":0,"bc":0,"bt":"SI","brc":0,"bcond":0,"bman":0,"mode":"Portafoglio","rman":0,"we":0.6,"re":0.07,"rb":0.03,"ter":0.0025,"te":0.26,"tb":0.2,"N":10,"g":0};
+const SPEC=[
+["1. Vendita immobile",[["off","Prezzo offerto / di vendita (€)","eur"],["mktLink","Valore mercato = prezzo offerto","bool"],["mkt","Valore di mercato attuale (€)","eur"],["fee","Provvigione agenzia (%)","pct"],["iva","IVA provvigione (%)","pct"],["tec","Verifiche tecniche/catastali (€)","eur"],["ipo","Cancellazione ipoteca (€)","eur"],["oth","Altri costi vendita (€)","eur"],["mut","Mutuo residuo (€)","eur"],["tm","Tasso mutuo residuo (%)","pct"],["pv","Plusvalenza tassabile","sel",["NO","SI"]],["cb","Costo fiscale acquisto (€)","eur"],["pvr","Imposta plusvalenza (%)","pct"]]],
+["2. Immobile",[["mq","Superficie (mq)","num"],["cmq","Canone concordato (€/mq/anno)","num"],["cmc","Cantina (mq)","num"],["ccc","Coefficiente cantina (%)","pct"],["rc","Rendita catastale (€)","num"],["cimu","Moltiplicatore IMU","num"],["imc","IMU concordato (%)","pct"],["iml","IMU canone libero (%)","pct"],["cond","Spese condominiali totali (€/anno)","eur"],["condp","di cui a carico proprietario (€)","eur"]]],
+["3. Affitto",[["cl","Canone libero mensile – E (€)","eur"],["cs","Canone mensile simulazione – F (€)","eur"],["rg","Regime simulazione F","sel",["IRPEF","Cedolare 21%"]],["irp","Aliquota IRPEF marginale (%)","pct"],["add","Addizionali reg.+com. (%)","pct"],["ab5","Abbattimento forfettario (%)","pct"],["ab30","Riduzione concordato IRPEF (%)","pct"],["reg","Registro quota locatore (%)","pct"],["c21","Cedolare libero (%)","pct"],["c10","Cedolare concordato attuale (%)","pct"],["c5","Cedolare concordato agevolata (%)","pct"],["c1","Cedolare agevolata <36 anni (%)","pct"],["ylast","Ultimo anno aliquota agevolata","num"],["y0","Anno inizio contratto","num"],["ctb","Contributo una tantum (€)","eur"],["ctby","Anni ripartizione contributo","num"],["vac","Sfitto (mesi/anno)","num"],["idx","Indicizzazione ISTAT (solo IRPEF, %)","pct"]]],
+["4. Manutenzione proprietario",[["mrp","Manutenzione ricorrente (% valore/anno)","pct"],["minf","Inflazione costi (%)","pct"],["inf","Intervento straordinario (€)","eur"],["infy","Anno intervento","num"],["cst","Lavori straordinari condominiali (€/anno)","eur"],["det","Detrazione fiscale intervento (%)","pct"],["man","Altre spese annue (€)","eur"]]],
+["5. Box auto",[["bx","Includi box (1 = sì, 0 = no)","sel",["0","1"]],["bp","Prezzo vendita box (€)","eur"],["bmktLink","Valore mercato box = prezzo","bool"],["bmkt","Valore mercato box (€)","eur"],["bfix","Costi fissi vendita box (€)","eur"],["bc","Canone box mensile (€)","eur"],["bt","Box allo stesso inquilino","sel",["SI","NO"]],["brc","Rendita catastale box (€)","num"],["bcond","Condominio box proprietario (€/anno)","eur"],["bman","Manutenzione box (€/anno)","eur"]],"box"],
+["6. Rendimento alternativo",[["mode","Rendimento da usare","sel",["Portafoglio","Manuale"]],["rman","Rendimento manuale netto (%)","pct"],["we","Peso azionario (%)","pct"],["re","Rend. lordo azioni (%)","pct"],["rb","Rend. lordo obbligazioni (%)","pct"],["ter","Costi ETF (%)","pct"],["te","Tassazione azioni (%)","pct"],["tb","Tassazione obbligazioni (%)","pct"],["N","Orizzonte (anni)","num"],["g","Rivalutazione annua immobile (%)","pct"]]]];
+const SK="affitta_o_vendi_v1";let P=JSON.parse(JSON.stringify(DEF));
+try{const s=localStorage.getItem(SK);if(s)P=Object.assign(P,JSON.parse(s));}catch(e){}
+const ok=v=>v!=null&&isFinite(v);
+const eur=v=>!ok(v)?"n.d.":(v<0?"(":"")+Math.abs(Math.round(v)).toLocaleString("it-IT")+" €"+(v<0?")":"");
+const pc=(v,d=2)=>!ok(v)?"n.d.":(v*100).toFixed(d).replace(".",",")+"%";
+const yr=v=>v==null?"> 50 anni":!ok(v)?"n.d.":v.toFixed(1).replace(".",",")+" anni";
+function toast(m,ms){const t=document.getElementById("toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),ms||2500);}
+function buildInputs(){const a=document.getElementById("inputs");let h="";
+ SPEC.forEach(([t,fs,cls],i)=>{h+=`<details ${i<1||cls?"open":""} class="${cls||""}"><summary>${t}</summary>`;
+  fs.forEach(([k,l,ty,x])=>{let v=P[k],inp;
+   if(ty==="sel")inp=`<select data-k="${k}" data-t="sel">${x.map(o=>`<option ${String(v)===o?"selected":""}>${o}</option>`).join("")}</select>`;
+   else if(ty==="bool")inp=`<input type="checkbox" data-k="${k}" data-t="bool" ${v?"checked":""} style="width:auto;min-height:0;justify-self:end;transform:scale(1.3)">`;
+   else{const dv=ty==="pct"?+(v*100).toFixed(4):v;inp=`<input type="number" inputmode="decimal" step="any" placeholder="0" data-k="${k}" data-t="${ty}" value="${dv?dv:""}">`;}
+   h+=`<div class="f"><label>${l}</label>${inp}</div>`;});
+  h+="</details>";});
+ h+=`<div class="btns"><button class="clr" onclick="clearAll()">🗑️ Cancella tutti i dati</button><button class="wa" onclick="shareApp()">📤 Condividi app</button><button class="sec" onclick="tab(0)" style="grid-column:1/3">📊 Vedi risultati</button></div>`;
+ a.innerHTML=h;
+ a.querySelectorAll("[data-k]").forEach(e=>e.addEventListener(e.type==="checkbox"||e.tagName==="SELECT"?"change":"input",()=>{const k=e.dataset.k,t=e.dataset.t;
+  if(t==="sel")P[k]=k==="bx"?+e.value:e.value;else if(t==="bool")P[k]=e.checked;else{let n=parseFloat(e.value);if(isNaN(n))n=0;P[k]=t==="pct"?n/100:n;}
+  syncDis();render();}));syncDis();}
+function syncDis(){[["mkt","mktLink","off"],["bmkt","bmktLink","bp"]].forEach(([k,l,src])=>{const e=document.querySelector(`[data-k="${k}"]`);if(!e)return;e.disabled=!!P[l];if(P[l]){e.value=P[src]||"";}});}
+function clearAll(){if(!confirm("Cancellare tutti i dati inseriti?"))return;P=JSON.parse(JSON.stringify(DEF));try{localStorage.removeItem(SK);}catch(e){}buildInputs();render();tab(1);toast("Dati cancellati");}
+async function shareApp(){
+ const msg="Ti condivido il simulatore Affittare o Vendere: apri il file HTML allegato con il browser.";
+ let file=null;try{file=new File([APP_SRC],APP_NAME,{type:"text/html"});}catch(e){}
+ if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
+  try{await navigator.share({files:[file],title:"Affittare o Vendere",text:msg});return;}catch(e){if(e&&e.name==="AbortError")return;}
+ }
+ if(navigator.share&&location.protocol.startsWith("http")){try{await navigator.share({title:"Affittare o Vendere",text:msg,url:location.href});return;}catch(e){if(e&&e.name==="AbortError")return;}}
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([APP_SRC],{type:"text/html"}));a.download=APP_NAME;document.body.appendChild(a);a.click();a.remove();
+ toast("File "+APP_NAME+" scaricato: allegalo nella chat WhatsApp (📎 → Documento)",6000);
+ setTimeout(()=>window.open("https://web.whatsapp.com/","_blank"),800);}
+function svgBar(labels,vals,fmt,ref){const W=560,H=260,m={l:70,r:10,t:18,b:40};const all=vals.concat(ref!=null?[ref]:[]).filter(ok);
+ let mx=Math.max(0,...all),mn=Math.min(0,...all);if(mx===mn)mx=1;const pad=(mx-mn)*.12;mx+=pad;if(mn<0)mn-=pad;
+ const y=v=>m.t+(mx-v)/(mx-mn)*(H-m.t-m.b),bw=(W-m.l-m.r)/labels.length;let s=`<svg viewBox="0 0 ${W} ${H}" width="100%">`;
+ for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4;s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="#eee"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end" fill="#888">${fmt(v)}</text>`;}
+ s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(0)}" y2="${y(0)}" stroke="#999"/>`;
+ vals.forEach((v,i)=>{const x=m.l+i*bw+bw*.18,w=bw*.64;s+=`<text x="${x+w/2}" y="${H-m.b+18}" text-anchor="middle" fill="#444" font-weight="600">${labels[i]}</text>`;if(!ok(v))return;
+  const y0=y(Math.max(0,v)),hh=Math.abs(y(v)-y(0));
+  s+=`<rect x="${x}" y="${y0}" width="${w}" height="${hh}" rx="3" fill="${v>=(ref??0)?"#3DCD58":"#e06666"}"/><text x="${x+w/2}" y="${v>=0?y0-4:y0+hh+13}" text-anchor="middle" font-weight="600">${fmt(v)}</text>`;});
+ if(ok(ref))s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(ref)}" y2="${y(ref)}" stroke="#ED7D31" stroke-width="2" stroke-dasharray="6 4"/><text x="${W-m.r}" y="${y(ref)-5}" text-anchor="end" fill="#ED7D31" font-weight="600">Alternativo ${fmt(ref)}</text>`;
+ return s+"</svg>";}
+const COLS=["#1f77b4","#2ca02c","#17becf","#9467bd","#3DCD58","#ff7f0e"];
+function svgCum(o){const W=560,H=290,m={l:60,r:10,t:15,b:48},N=o.N;const series={};let all=[];
+ SCEN.forEach(([c])=>{const s=o.scen[c];let acc=0,arr=[];for(let t=0;t<=N;t++){if(t>0)acc=acc*(1+o.rn)+s.rows[t-1].cf;
+   const prop=t===N?s.rows[N-1].re:(o.mkt+P.bx*o.bmkt)*Math.pow(1+P.g,t)*(1-o.fpct);arr.push(acc+prop);}series[c]=arr;all=all.concat(arr);});
+ const sell=[...Array(N+1)].map((_,t)=>o.cap*Math.pow(1+o.rn,t));all=all.concat(sell).filter(ok);if(!all.length)all=[0,1];
+ let mx=Math.max(...all),mn=Math.min(...all);if(mx===mn){mx+=1;mn-=1}const pd=(mx-mn)*.05;mx+=pd;mn-=pd;
+ const x=t=>m.l+t/N*(W-m.l-m.r),y=v=>m.t+(mx-v)/(mx-mn)*(H-m.t-m.b);
+ let s=`<svg viewBox="0 0 ${W} ${H}" width="100%">`;for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4;s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="#eee"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end" fill="#888">${Math.round(v/1000)}k</text>`;}
+ for(let t=0;t<=N;t+=Math.max(1,Math.round(N/10)))s+=`<text x="${x(t)}" y="${H-m.b+15}" text-anchor="middle" fill="#888">${t}</text>`;
+ const pts=a=>a.map((v,t)=>ok(v)?x(t)+","+y(v):"").join(" ");
+ SCEN.forEach(([c],i)=>{s+=`<polyline fill="none" stroke="${COLS[i]}" stroke-width="2" points="${pts(series[c])}"/><rect x="${m.l+i*62}" y="${H-14}" width="10" height="10" fill="${COLS[i]}"/><text x="${m.l+i*62+14}" y="${H-5}">${c}</text>`;});
+ s+=`<polyline fill="none" stroke="#d62728" stroke-width="2.5" stroke-dasharray="6 4" points="${pts(sell)}"/><text x="${m.l+6*62}" y="${H-5}" fill="#d62728">--- Vendita</text>`;
+ return s+"</svg>";}
+function pill(e){return `<span class="pill ${/^AFFITTARE/.test(e)?"pa":/^VENDERE/.test(e)?"pv":"pn"}">${e}</span>`;}
+function bestIdx(o){const S=SCEN.map(([c])=>o.scen[c]);let b=0;S.forEach((s,i)=>{if((ok(s.van)?s.van:-1e18)>(ok(S[b].van)?S[b].van:-1e18))b=i;});return b;}
+let O;
+function render(){try{localStorage.setItem(SK,JSON.stringify(P));}catch(e){}
+ const o=calc(P);O=o;const S=SCEN.map(([c])=>o.scen[c]);const best=bestIdx(o),bs=S[best];const has=o.cap>0,win=has&&bs.van>0;
+ document.getElementById("empty").style.display=has?"none":"block";
+ document.getElementById("sub").textContent=has?`Prezzo ${eur(P.off)} · Box ${P.bx?"incluso":"escluso"} · Capitale netto ${eur(o.cap)} · Alternativo ${pc(o.rn)} · ${o.N} anni`:"Inserisci i dati per iniziare";
+ const mb=document.getElementById("mbar");mb.innerHTML=has?`<span>${win?"✅ AFFITTARE":"🔴 VENDERE"}</span><span style="font-weight:400;font-size:12px;text-align:right">Migliore: ${SCEN[best][0]} · VAN ${eur(bs.van)}</span>`:`<span>✏️ Inserisci i dati</span><button style="font-size:12px" onclick="tab(1)">Vai agli input</button>`;mb.style.color=!has?"#7a5a00":win?"#1f8f3a":"#d64545";
+ const dec=has?(win?"AFFITTARE":"VENDERE"):"—";
+ document.getElementById("kpis").innerHTML=[
+  ["Capitale netto se vendi",eur(o.cap),`Immobile ${eur(o.caph)} + box ${eur(o.capb)}`],
+  ["Rendimento alternativo",pc(o.rn),P.mode==="Portafoglio"?`ETF ${Math.round(P.we*100)}/${Math.round(100-P.we*100)} netto`:"Manuale"],
+  ["Scenario migliore",has?SCEN[best][0]+" – "+SCEN[best][1]:"—",has?`VAN ${eur(bs.van)}`:""],
+  ["Decisione",dec,has?(win?`Scenario ${SCEN[best][0]}`:"Nessuno scenario batte la vendita"):""],
+  ["TIR scenario migliore",has?pc(bs.irr):"—",has?`Pareggio lordo ${pc(bs.irrGross)}`:""],
+  ["Prezzo di pareggio",has?eur(bs.be):"—","Sopra conviene vendere"]
+ ].map(([l,v,s],i)=>`<div class="k" style="${i===3&&has?`border-left-color:${win?"#3DCD58":"#d64545"}`:""}"><div class="l">${l}</div><div class="v" style="${i===2?"font-size:14px":""}${i===3&&has?`;color:${win?"#1f8f3a":"#d64545"}`:""}">${v}</div><div class="s">${s}</div></div>`).join("");
+ const R=[["Canone lordo annuo (anno 1)",s=>eur(s.can1)],["Costo mensile inquilino",s=>eur(s.tenant)],["Manutenzione su orizzonte",s=>eur(s.maint)],["Cash flow netto anno 1",s=>eur(s.cf1)],["di cui box anno 1",s=>eur(s.box1)],["Cash flow netto medio annuo",s=>eur(s.avg)],["Cash flow netto medio mensile",s=>eur(s.avg/12)],["Rendimento lordo su prezzo",s=>pc(s.gross)],["Rendimento netto medio su capitale",s=>pc(s.avg/o.cap)],["Payback (anni)",s=>yr(s.payback)],["TIR = tasso minimo di pareggio",s=>pc(s.irr),1],["Pareggio rendimento LORDO portafoglio",s=>pc(s.irrGross)],["Margine TIR vs alternativo",s=>s.irr==null?"n.d.":pc(s.irr-o.rn)],["VAN vs vendita oggi",s=>eur(s.van),1],["Patrimonio a fine orizzonte",s=>eur(s.patr)],["Prezzo di pareggio",s=>eur(s.be)],["ESITO",s=>pill(s.esito)]];
+ const V={"Cash flow netto anno 1":eur(o.cap*o.rn),"Cash flow netto medio annuo":eur(o.cap*o.rn),"Cash flow netto medio mensile":eur(o.cap*o.rn/12),"Rendimento netto medio su capitale":pc(o.rn),"Payback (anni)":"Immediato","TIR = tasso minimo di pareggio":pc(o.rn),"VAN vs vendita oggi":"0 €","Patrimonio a fine orizzonte":eur(o.cap*Math.pow(1+o.rn,o.N)),"Prezzo di pareggio":eur(P.off),"ESITO":pill("Benchmark")};
+ let t=`<table><tr><th>Indicatore</th>${SCEN.map(([c,n])=>`<th>${c}<br><span style="font-weight:400;font-size:10.5px">${n}</span></th>`).join("")}<th>Vendita oggi<br><span style="font-weight:400;font-size:10.5px">+ investimento</span></th></tr>`;
+ R.forEach(([l,f,hl])=>{t+=`<tr class="${hl?"hl":""}"><td>${l}</td>${S.map(s=>{const v=f(s);return `<td class="${v.startsWith("(")?"neg":""}">${v}</td>`}).join("")}<td style="background:#f2f2f2">${V[l]??""}</td></tr>`;});
+ document.getElementById("summary").innerHTML=t+"</table>";
+ const order=S.map((s,i)=>i).sort((a,b)=>((ok(S[b].van)?S[b].van:0)-(ok(S[a].van)?S[a].van:0)));
+ document.getElementById("mcards").innerHTML=order.map(i=>{const s=S[i],[c,n]=SCEN[i];return `<div class="sc ${has&&i===best?"best":""}"><div class="hd"><span>${c} – ${n}</span>${pill(s.esito)}</div><div class="bd">
+ <div><span>VAN vs vendita</span><b style="color:${s.van>0?"#1f8f3a":"#d64545"}">${eur(s.van)}</b></div><div><span>TIR (pareggio)</span><b>${pc(s.irr)}</b></div>
+ <div><span>Cash flow medio/mese</span>${eur(s.avg/12)}</div><div><span>Rend. netto medio</span>${pc(s.avg/o.cap)}</div>
+ <div><span>Payback</span>${yr(s.payback)}</div><div><span>Prezzo di pareggio</span>${eur(s.be)}</div>
+ <div><span>Canone lordo anno 1</span>${eur(s.can1)}</div><div><span>Manutenzione orizzonte</span>${eur(s.maint)}</div></div></div>`;}).join("")+
+ `<div class="sc"><div class="hd"><span>Vendita oggi + investimento</span>${pill("Benchmark")}</div><div class="bd"><div><span>Capitale netto</span>${eur(o.cap)}</div><div><span>Rend. netto</span>${pc(o.rn)}</div><div><span>Reddito/mese</span>${eur(o.cap*o.rn/12)}</div><div><span>Patrimonio a ${o.N} anni</span>${eur(o.cap*Math.pow(1+o.rn,o.N))}</div></div></div>`;
+ document.getElementById("chVan").innerHTML=svgBar(SCEN.map(x=>x[0]),S.map(s=>s.van),v=>Math.round(v/1000)+"k");
+ document.getElementById("chIrr").innerHTML=svgBar(SCEN.map(x=>x[0]),S.map(s=>s.irr),v=>pc(v,1),o.rn);
+ document.getElementById("chCum").innerHTML=svgCum(o);
+ const b=o.box;document.getElementById("box").innerHTML=P.bp>0?`<table>
+ <tr><td>Capitale netto vendita box</td><td>${eur(b.cap)}</td></tr><tr><td>Rendimento lordo (canone/prezzo)</td><td>${pc(b.gross)}</td></tr>
+ <tr><td>Cash flow netto annuo</td><td>${eur(b.cf)}</td></tr><tr><td>Rendimento netto</td><td>${pc(b.net)}</td></tr>
+ <tr class="hl"><td>TIR box su orizzonte</td><td>${pc(b.irr)}</td></tr><tr><td>VAN affitto vs vendita</td><td class="${b.van<0?"neg":""}">${eur(b.van)}</td></tr>
+ <tr class="hl"><td>Canone mensile di pareggio</td><td>${eur(b.be)}</td></tr><tr><td>Esito</td><td>${pill(b.van>0?"AFFITTARE BOX":"VENDERE BOX")}</td></tr></table>
+ <div class="note">Valutazione indipendente dall'interruttore del box. Sotto il canone di pareggio conviene vendere il box.</div>`:`<div class="note">Inserisci prezzo e canone del box nella sezione 5 per valutarlo.</div>`;
+ const hm=(rows,first,ff,hl)=>{let h=`<table><tr><th>${first}</th>${SCEN.map(x=>`<th>VAN ${x[0]}</th>`).join("")}</tr>`;
+  rows.forEach((r,i)=>{h+=`<tr class="${hl(r,i)?"hl":""}"><td>${ff(r)}</td>${r.v.map(v=>`<td class="${v>0?"cg":"cr"}">${eur(v)}</td>`).join("")}</tr>`;});return h+"</table>";};
+ document.getElementById("sOff").innerHTML=hm(o.sensOff,"Prezzo",r=>eur(r.o)+(r===o.sensOff[0]?" ◀":""),(r,i)=>i===0);
+ document.getElementById("sRate").innerHTML=hm(o.sensRate,"Rend. netto",r=>pc(r.r,1),r=>Math.abs(r.r-o.rn)<0.0025);
+ renderFlows();
+ document.getElementById("notes").innerHTML=`<b>Note.</b> VAN &gt; 0 = affittare rende più che vendere oggi e investire il capitale al rendimento alternativo. TIR = rendimento netto minimo che il capitale deve ottenere perché vendere convenga. Scenari C/D: cedolare agevolata fino all'ultimo anno indicato negli input, poi aliquota concordato attuale. Box allo stesso inquilino = pertinenza con il regime dello scenario; altrimenti IRPEF ordinaria. I dati restano solo su questo dispositivo. Risultati indicativi, non costituiscono consulenza fiscale o finanziaria.`;}
+function renderFlows(){const sel=document.getElementById("fsel");if(!sel.options.length)sel.innerHTML=SCEN.map(([c,n])=>`<option value="${c}">${c} – ${n}</option>`).join("");
+ const s=O.scen[sel.value],rows=s.rows.slice(0,O.N);
+ const L=[["Canone lordo","can"],["Sfitto","sf"],["Condominio proprietario","cond"],["IMU","imu"],["Imposte","tx"],["Contributo concordato","ctb"],["Manutenzione ricorrente","mr"],["Intervento straordinario","inf"],["Lavori condominiali","cst"],["Detrazione","det"],["Altre spese + interessi","oth"],["Box netto","box"],["CASH FLOW NETTO","cf"],["Realizzo fine orizzonte","re"]];
+ let h=`<table><tr><th>Voce</th>${rows.map(r=>`<th>${r.t}<br>${r.Y}</th>`).join("")}</tr>`;
+ L.forEach(([l,k])=>{h+=`<tr class="${k==="cf"?"hl":""}"><td>${l}</td>${rows.map(r=>`<td class="${r[k]<0?"neg":""}">${eur(r[k])}</td>`).join("")}</tr>`;});
+ document.getElementById("flows").innerHTML=h+"</table>";}
+function exportCSV(){let c="Scenario;Anno;Anno solare;Canone;Sfitto;Condominio;IMU;Imposte;Contributo;Manut.ricorrente;Intervento straord.;Lavori cond.;Detrazione;Altre;Box netto;Cash flow;Realizzo\n";
+ SCEN.forEach(([k])=>O.scen[k].rows.slice(0,O.N).forEach(r=>{c+=[k,r.t,r.Y,r.can,r.sf,r.cond,r.imu,r.tx,r.ctb,r.mr,r.inf,r.cst,r.det,r.oth,r.box,r.cf,r.re].map(v=>typeof v==="number"?v.toFixed(2).replace(".",","):v).join(";")+"\n";}));
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+c],{type:"text/csv"}));a.download="flussi_affittare_o_vendere.csv";a.click();}
+function tab(i){document.body.classList.toggle("show-in",i===1);document.getElementById("tbR").classList.toggle("on",i!==1);document.getElementById("tbI").classList.toggle("on",i===1);window.scrollTo(0,0);}
+function go(id){tab(0);setTimeout(()=>document.getElementById(id).scrollIntoView({behavior:"smooth"}),50);}
+document.getElementById("fsel").addEventListener("change",renderFlows);
+if("serviceWorker" in navigator&&location.protocol.startsWith("http")){navigator.serviceWorker.register("sw.js").catch(()=>{});}
+buildInputs();render();
+</script></body></html>

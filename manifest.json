@@ -1,0 +1,21 @@
+{
+  "name": "Affittare o Vendere – Simulatore immobiliare",
+  "short_name": "Affitta o Vendi",
+  "description": "Simulatore per decidere se affittare o vendere un immobile: confronta scenari di locazione e vendita con VAN, TIR, payback e prezzo di pareggio. Funziona offline.",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "it",
+  "dir": "ltr",
+  "background_color": "#f4f6f8",
+  "theme_color": "#1f8f3a",
+  "categories": ["finance", "productivity", "utilities"],
+  "prefer_related_applications": false,
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
